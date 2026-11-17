@@ -1,0 +1,6 @@
+{
+  "namespace": "workshophub-lab",
+  "component": "ingress",
+  "change": "upgrade",
+  "backup_verified": false
+}
