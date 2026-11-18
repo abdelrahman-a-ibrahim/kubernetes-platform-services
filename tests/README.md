@@ -1,12 +1,19 @@
-# Behavior test plan
+# Verification plan
 
-No implementation tests exist yet. Foundation checks do not count as behavior tests.
+Runtime behavior tests will be added with the implementation. The current source integrity check does not provide runtime coverage.
 
-Build meaningful tests as each behavior is implemented:
-1. Domain tests for invariants and explicit error results.
-2. Adapter contract tests, including malformed and unauthorized inputs.
-3. Integration tests against actual chosen dependencies, isolated from production.
-4. Relevant concurrency, retry, crash/restart and recovery tests.
-5. One reproducible end-to-end acceptance scenario.
+## Required behavior coverage
+- Fresh-cluster bootstrap is reproducible from the documented inputs.
+- Application identity cannot change cluster-scoped resources.
+- A failed upgrade has a tested recovery path.
+- Dependency checks distinguish missing add-ons from application bugs.
 
-Use `docs/failure-lab.md` and `docs/acceptance.md` for project-specific cases. A mock cannot establish real service ordering, consistency, replication or durability guarantees. Label simulator coverage and real-dependency coverage separately.
+## Failure coverage
+- Deploy an incompatible chart value and observe reconciliation.
+- Remove access to a referenced secret.
+- Block an application dependency with network policy.
+- Upgrade an add-on with an incompatible CRD version in a disposable cluster.
+
+Add domain tests, adapter contract tests and integration tests as those components are implemented. Include relevant invalid input, unauthorized access, concurrency, retry and restart scenarios. Real dependency guarantees require real integration evidence; mocks alone cannot establish ordering, replication, consistency or durability.
+
+See [reliability](../docs/reliability.md) for execution/reporting requirements.
