@@ -1,40 +1,32 @@
-# Architecture brief
+# Architecture
 
-Status: proposed, not implemented.
+Status: proposed. Components shown below are implementation targets.
 
-## Scenario
-Create a repeatable add-on and workload lifecycle for a local WorkshopHub cluster, including ingress, storage integration, certificate handling, monitoring and policy.
+## Product context
+A cluster-services repository for managing application packaging and supporting add-ons through versioned desired state. It covers dependency ordering, scoped permissions, configuration, policy enforcement and controlled component upgrades.
 
-## System boundary
+## Component view
 ```text
 Versioned desired state -> reconciliation -> add-ons / namespaces
                                                    |
                                             application workloads
 ```
 
-The first implementation must run against synthetic inputs or a local adapter. Add live infrastructure only as a separately documented step. Describe the trust boundary between the interface, persistence and any external system.
+## Design decisions
+- Helm versus Kustomize responsibilities
+- GitOps reconciliation boundaries
+- Add-on upgrade ownership and compatibility policy
 
-## Decisions to resolve
-1. Helm versus Kustomize responsibilities
-2. GitOps reconciliation boundaries
-3. Add-on upgrade ownership and compatibility policy
+Record decisions and alternatives in [ADR 0001](adr/0001-system-boundaries.md). Define authoritative state, acknowledgement boundaries, identities, retry behavior and recovery ownership before implementing adapters.
 
-For each decision, record alternatives, rejected options, operational cost, failure behavior and the condition under which you would revisit it. Use [ADR 0001](adr/0001-system-boundaries.md) as a starting point; its status is proposed.
+## Interface boundary
+`src/kubernetes_platform_services/interfaces.py` defines the initial application boundary. Return models and error contracts remain to be specified. These interfaces do not implement the component graph.
 
-## Before writing adapters
-- Identify the authoritative state and the acknowledgement/commit boundary.
-- Define stable identifiers, versioning and invalid input handling.
-- Describe concurrency, retry and recovery behavior; specify what is atomic and what is not.
-- Map identities and permissions. Separate data supplied by a user/tool from execution authority.
-- Define observable success, failure and missing telemetry.
-- Explain resource cleanup and state retention.
+## Integration boundaries
+Local adapters and synthetic fixtures precede external integrations. Every live adapter needs an explicit identity, permission scope, timeout strategy and observability contract. Separate user-supplied content from execution authority.
 
-## Diagram assignment
-Create your own component diagram plus a sequence diagram for one happy path and one partial-failure path. Label ownership, persistence, identities and acknowledgement points. Diagrams should describe the implemented system when promoted into portfolio evidence.
+## Deployment design
+Document topology, dependency versions, configuration and state persistence alongside the first executable delivery. Record what local environments cannot establish about availability, ordering or durability.
 
-## Design review prompts
-1. Which invariant would be violated by two concurrent requests?
-2. What becomes durable before the caller receives success?
-3. What can be replayed and what cannot?
-4. Which failure does a local simulator fail to reproduce?
-5. What is the smallest useful implementation of this design?
+## Compatibility
+Version interfaces and fixtures when their semantics change. Sibling projects are optional integrations, not implicit filesystem dependencies.

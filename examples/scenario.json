@@ -1,5 +1,5 @@
 {
-  "namespace": "workshophub-lab",
+  "namespace": "workshophub-dev",
   "component": "ingress",
   "change": "upgrade",
   "backup_verified": false
